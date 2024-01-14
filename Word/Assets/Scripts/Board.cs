@@ -14,10 +14,16 @@ public class Board : MonoBehaviour
     private string[] _validWords;
     [SerializeField]
     private string _solution = "";
-    // private string _guess = "";
 
     private int _rowI = 0;
     private int _tilesI = 0;
+
+    [Header("States")]
+    public Tile.State _defaultState;
+    public Tile.State _correctState;
+    public Tile.State _wrongPositionState;
+    public Tile.State _wrongState;
+    public Tile.State _selectedState;
 
     private void Awake() 
     {
@@ -53,7 +59,7 @@ public class Board : MonoBehaviour
         {
             if (Input.GetKeyUp(KeyCode.Return))
             {
-                SubmitRow();
+                SubmitRow(_rows[_rowI]);
             }
         }
         else
@@ -71,6 +77,7 @@ public class Board : MonoBehaviour
 
     private void AddLetter(char letter)
     {
+        _rows[_rowI]._tiles[_tilesI].SetState(_selectedState);
         _rows[_rowI]._tiles[_tilesI].SetLetter(letter);
         _tilesI++;
     }
@@ -78,12 +85,31 @@ public class Board : MonoBehaviour
     private void DeleteLetter()
     {
         _tilesI = Mathf.Max(0, _tilesI - 1);
+        _rows[_rowI]._tiles[_tilesI].SetState(_defaultState);
         _rows[_rowI]._tiles[_tilesI].SetLetter('\0');
     }
 
-    private void SubmitRow()
+    private void SubmitRow(Row row)
     {
-        // _rowI++;
-        // _tilesI = 0;
+        for (int i = 0; i < row._tiles.Length; i++)
+        {
+            Tile tile = row._tiles[i];
+
+            if (tile._letter == _solution[i])
+            {
+                tile.SetState(_correctState);
+            }
+            else if(_solution.Contains(tile._letter.ToString()))
+            {
+                tile.SetState(_wrongPositionState);
+            }
+            else
+            {
+                tile.SetState(_wrongState);
+            }
+        }
+        // Reset indexes
+        _rowI++;
+        _tilesI = 0;
     }
 }
