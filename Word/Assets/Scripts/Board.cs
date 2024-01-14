@@ -11,12 +11,36 @@ public class Board : MonoBehaviour
 
     private Row[] _rows;
 
+    private string[] _validWords;
+    [SerializeField]
+    private string _solution = "";
+    // private string _guess = "";
+
     private int _rowI = 0;
     private int _tilesI = 0;
 
     private void Awake() 
     {
         _rows = GetComponentsInChildren<Row>();
+    }
+
+    private void Start()
+    {
+        LoadData();
+        SetRandomSolution();
+    }
+
+    private void LoadData()
+    {
+        TextAsset textFile = Resources.Load<TextAsset>("en_word");
+
+        _validWords = textFile.text.Split('\n');
+    }
+
+    private void SetRandomSolution()
+    {
+        _solution = _validWords[Random.Range(0, _validWords.Length)];
+        _solution = _solution.ToLower().Trim();
     }
 
     private void Update()
@@ -47,7 +71,7 @@ public class Board : MonoBehaviour
 
     private void AddLetter(char letter)
     {
-        _rows[_rowI]._tiles[_tilesI].SetLetter(key);
+        _rows[_rowI]._tiles[_tilesI].SetLetter(letter);
         _tilesI++;
     }
 
