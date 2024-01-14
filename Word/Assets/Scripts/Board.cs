@@ -47,6 +47,7 @@ public class Board : MonoBehaviour
     {
         _solution = _validWords[Random.Range(0, _validWords.Length)];
         _solution = _solution.ToLower().Trim();
+        _solution = "guess";
     }
 
     private void Update()
@@ -91,6 +92,9 @@ public class Board : MonoBehaviour
 
     private void SubmitRow(Row row)
     {
+        string remainingLetters = _solution;
+
+        // Check for bad and correct letters
         for (int i = 0; i < row._tiles.Length; i++)
         {
             Tile tile = row._tiles[i];
@@ -98,16 +102,36 @@ public class Board : MonoBehaviour
             if (tile._letter == _solution[i])
             {
                 tile.SetState(_correctState);
+                remainingLetters = remainingLetters.Remove(i, 1);
+                remainingLetters = remainingLetters.Insert(i, " ");
             }
-            else if(_solution.Contains(tile._letter.ToString()))
-            {
-                tile.SetState(_wrongPositionState);
-            }
-            else
+            else if (!_solution.Contains(tile._letter))
             {
                 tile.SetState(_wrongState);
             }
         }
+
+        // Check for wrong position
+        for (int i = 0; i < row._tiles.Length; i++)
+        {
+            Tile tile = row._tiles[i];
+
+            if (tile._state != _correctState && tile._state != _wrongState)
+            {
+                if (remainingLetters.Contains(tile._letter))
+                {
+                    tile.SetState(_wrongPositionState);
+                    int index = remainingLetters.IndexOf(tile._letter);
+                    remainingLetters = remainingLetters.Remove(index, 1);
+                    remainingLetters = remainingLetters.Insert(index, " ");
+                }
+                else
+                {
+                    tile.SetState(_wrongState);
+                }
+            }
+        }
+
         // Reset indexes
         _rowI++;
         _tilesI = 0;
