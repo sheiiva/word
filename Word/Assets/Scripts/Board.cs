@@ -21,14 +21,11 @@ public class Board : MonoBehaviour
 
     private void Update()
     {
-        Row currentRow = _rows[_rowI];
-
         if (Input.GetKeyUp(KeyCode.Backspace))
         {
-            _tilesI = Mathf.Max(0, _tilesI - 1);
-            currentRow._tiles[_tilesI].SetLetter('\0');
+            DeleteLetter();
         }
-        else if (_tilesI >= currentRow._tiles.Length)
+        else if (_tilesI >= _rows[_rowI]._tiles.Length)
         {
             if (Input.GetKeyUp(KeyCode.Return))
             {
@@ -41,12 +38,23 @@ public class Board : MonoBehaviour
             {
                 if (Input.GetKeyUp(key))
                 {
-                    currentRow._tiles[_tilesI].SetLetter((char)key);
-                    _tilesI++;
+                    AddLetter((char)key);
                     break; // Only one key can be pressed at a time
                 }
             }
         }
+    }
+
+    private void AddLetter(char letter)
+    {
+        _rows[_rowI]._tiles[_tilesI].SetLetter(key);
+        _tilesI++;
+    }
+
+    private void DeleteLetter()
+    {
+        _tilesI = Mathf.Max(0, _tilesI - 1);
+        _rows[_rowI]._tiles[_tilesI].SetLetter('\0');
     }
 
     private void SubmitRow()
