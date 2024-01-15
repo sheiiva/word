@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 
 public class Board : MonoBehaviour
@@ -25,6 +26,9 @@ public class Board : MonoBehaviour
     public Tile.State _wrongState;
     public Tile.State _selectedState;
 
+    [Header("UI")]
+    public TextMeshProUGUI _invalidWordText;
+
     private void Awake() 
     {
         _rows = GetComponentsInChildren<Row>();
@@ -41,13 +45,16 @@ public class Board : MonoBehaviour
         TextAsset textFile = Resources.Load<TextAsset>("en_word");
 
         _validWords = textFile.text.Split('\n');
+        for (int i = 0; i < _validWords.Length; i++)
+        {
+            _validWords[i] = _validWords[i].ToLower().Trim();
+        }
     }
 
     private void SetRandomSolution()
     {
         _solution = _validWords[Random.Range(0, _validWords.Length)];
         _solution = _solution.ToLower().Trim();
-        _solution = "guess";
     }
 
     private void Update()
@@ -55,6 +62,7 @@ public class Board : MonoBehaviour
         if (Input.GetKeyUp(KeyCode.Backspace))
         {
             DeleteLetter();
+            _invalidWordText.gameObject.SetActive(false);
         }
         else if (_tilesI >= _rows[_rowI]._tiles.Length)
         {
@@ -92,6 +100,12 @@ public class Board : MonoBehaviour
 
     private void SubmitRow(Row row)
     {
+        if (!IsValidWord(row.word))
+        {
+            _invalidWordText.gameObject.SetActive(true);
+            return;
+        }
+
         string remainingLetters = _solution;
 
         // Check for bad and correct letters
@@ -135,5 +149,10 @@ public class Board : MonoBehaviour
         // Reset indexes
         _rowI++;
         _tilesI = 0;
+    }
+
+    private bool IsValidWord(string word)
+    {
+        return System.Array.IndexOf(_validWords, word) != -1;
     }
 }
