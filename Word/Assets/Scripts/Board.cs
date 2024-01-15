@@ -1,5 +1,6 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Board : MonoBehaviour
 {
@@ -28,6 +29,7 @@ public class Board : MonoBehaviour
 
     [Header("UI")]
     public TextMeshProUGUI _invalidWordText;
+    public Button _newWordButton;
 
     private void Awake() 
     {
@@ -38,6 +40,27 @@ public class Board : MonoBehaviour
     {
         LoadData();
         SetRandomSolution();
+    }
+
+    public void NewWord()
+    {
+        SetRandomSolution();
+        ClearBoard();
+        enabled = true; // Enable this script
+    }
+
+    private void ClearBoard()
+    {
+        foreach (Row row in _rows)
+        {
+            for (int i = 0; i < row._tiles.Length; i++)
+            {
+                row._tiles[i].SetState(_defaultState);
+                row._tiles[i].SetLetter('\0');
+            }
+        }
+        _rowI = 0;
+        _tilesI = 0;
     }
 
     private void LoadData()
@@ -146,13 +169,45 @@ public class Board : MonoBehaviour
             }
         }
 
+        if (HasWon(row))
+        {
+            enabled = false; // Disable this script
+        }
+
         // Reset indexes
         _rowI++;
         _tilesI = 0;
+
+        if (_rowI >= _rows.Length)
+        {
+            enabled = false; // Disable this script
+        }
     }
 
     private bool IsValidWord(string word)
     {
         return System.Array.IndexOf(_validWords, word) != -1;
+    }
+
+    private bool HasWon(Row row)
+    {
+        for (int i = 0; i < row._tiles.Length; i++)
+        {
+            if (row._tiles[i]._state != _correctState)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private void OnEnable()
+    {
+        _newWordButton.gameObject.SetActive(false);
+    }
+
+    private void OnDisable()
+    {
+        _newWordButton.gameObject.SetActive(true);
     }
 }

@@ -27,7 +27,7 @@ public class Tile : MonoBehaviour
 
     public void SetLetter(char letter)
     {
-        this._letter = letter;
+        _letter = letter;
         _text.text = letter.ToString();
     }
 
