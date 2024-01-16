@@ -733,6 +733,7 @@ MonoBehaviour:
     _fillColor: {r: 0.07058824, g: 0.07058824, b: 0.07450981, a: 1}
     _outlineColor: {r: 0.3372549, g: 0.34117648, b: 0.34509805, a: 1}
   _invalidWordText: {fileID: 884560240}
+  _newWordButton: {fileID: 1126720195}
 --- !u!1001 &1093001740
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1013,7 +1014,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1126720196}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1062830971}
+        m_TargetAssemblyTypeName: Board, Assembly-CSharp
+        m_MethodName: NewWord
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1126720196
 MonoBehaviour:
   m_ObjectHideFlags: 0
