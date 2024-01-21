@@ -14,51 +14,58 @@ jobs:
         if: ${{ !startsWith(env.UNITY_LICENSE, '<') }}
         run: exit 1
 
-  testAllModes:
-    name: Test in ${{ matrix.testMode }}
+  testRunner:
+    needs: checkLicense
+    name: Test all modes 📝
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        projectPath:
-          - Word
-        testMode:
-          - playmode
-          - editmode
-          - standalone
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Create LFS file list
+        run: git lfs ls-files -l | cut -d' ' -f1 | sort > .lfs-assets-id
+
+      - name: Restore LFS cache
+        uses: actions/cache@v2
+        id: lfs-cache
         with:
-          lfs: true
-      - uses: actions/cache@v3
+          path: .git/lfs
+          key: ${{ runner.os }}-lfs-${{ hashFiles('.lfs-assets-id') }}
+
+      - name: Git LFS Pull
+        run: |
+          git lfs pull
+          git add .
+          git reset --hard
+
+      - name: Restore Library cache
+        uses: actions/cache@v2
         with:
-          path: ${{ matrix.projectPath }}/Library
-          key: Library-${{ matrix.projectPath }}
+          path: Library
+          key: Library-test-project
           restore-keys: |
+            Library-test-project-
             Library-
+
       - uses: game-ci/unity-test-runner@v4
-        id: tests
+        id: testAllModes
         env:
           UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
-          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
-          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
-          projectPath: ${{ matrix.projectPath }}
-          testMode: ${{ matrix.testMode }}
-          artifactsPath: ${{ matrix.testMode }}-artifacts
+          projectPath: Word
           githubToken: ${{ secrets.GITHUB_TOKEN }}
-          checkName: ${{ matrix.testMode }} Test Results
-          coverageOptions: 'generateAdditionalMetrics;generateHtmlReport;generateBadgeReport;assemblyFilters:+my.assembly.*'
+
       - uses: actions/upload-artifact@v3
         if: always()
         with:
-          name: Test results for ${{ matrix.testMode }}
-          path: ${{ steps.tests.outputs.artifactsPath }}
+          name: Test results
+          path: ${{ steps.testAllModes.outputs.artifactsPath }}
+
       - uses: actions/upload-artifact@v3
-        if: always()
+        if: ${{ steps.testAllModes.outputs.coveragePath != '' }}
         with:
-          name: Coverage results for ${{ matrix.testMode }}
-          path: ${{ steps.tests.outputs.coveragePath }}
+          name: Coverage results
+          path: ${{ steps.myTestStep.outputs.coveragePath }}
 
 #
 #  buildWebGL:
