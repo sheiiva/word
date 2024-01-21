@@ -8,4 +8,10 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/UI pack/Prefabs/SampleScene.unity
     guid: 2cda990e2423bbf4892e6590ba056729
+  - enabled: 1
+    path: Assets/Scenes/Settings.unity
+    guid: b416e5b4c7d070c41a4b713338bc423f
+  - enabled: 1
+    path: Assets/Scenes/Word.unity
+    guid: 3fc8acdd13e6c734bafef6554d6fdbcd
   m_configObjects: {}
