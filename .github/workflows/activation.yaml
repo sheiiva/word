@@ -9,3 +9,7 @@ jobs:
     steps:
       - name: Unity - Activate
         uses: game-ci/unity-activate@v2.0.0
+        with:
+          unityLicense: ${{ secrets.UNITY_LICENSE }}
+          unityEmail: ${{ secrets.UNITY_EMAIL }}
+          unityPassword: ${{ secrets.UNITY_PASSWORD }}
