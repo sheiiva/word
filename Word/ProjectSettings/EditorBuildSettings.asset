@@ -15,4 +15,5 @@ EditorBuildSettings:
     path: Assets/Scenes/Word.unity
     guid: 3fc8acdd13e6c734bafef6554d6fdbcd
   m_configObjects:
+    com.unity.adaptiveperformance.loader_settings: {fileID: 11400000, guid: a0b152f958214c349a573d9fe4859934, type: 2}
     com.unity.adaptiveperformance.simulator.provider_settings: {fileID: 11400000, guid: 3ed4fa64c332e814cab27d6564a29908, type: 2}
